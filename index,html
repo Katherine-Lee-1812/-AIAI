@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự án STEM - Colony Scanner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Các style giữ nguyên từ bản cũ của bạn */
+        #scannerBtn{position:fixed;top:20px;right:20px;font-size:32px;background:white;border-radius:50%;padding:12px;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.25);z-index:999;}
+        #scannerPopup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:15px;display:none;box-shadow:0 10px 25px rgba(0,0,0,0.3);width:420px;text-align:center;z-index:1000;}
+        #canvasOutput{max-width:100%;margin-top:10px;border:1px solid #ddd; border-radius: 8px;}
+        .process-container{display:grid;grid-template-columns: 1fr 420px;gap:40px;align-items:start;margin-top:40px;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Be Vietnam Pro',sans-serif;background-size:cover;background-position:center;background-attachment:fixed;}
+        .overlay{min-height:100vh;background:linear-gradient(rgba(255,255,255,0.55),rgba(255,255,255,0.45));backdrop-filter:blur(6px);}
+        .header{background:rgba(231,198,183,0.9);padding:25px;text-align:center;font-family:'Playfair Display',serif;font-size:34px;box-shadow:0 6px 20px rgba(0,0,0,0.1);}
+        .subtitle{text-align:center;font-size:18px;padding:10px;color:#444;}
+        .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:60px;max-width:900px;margin:120px auto;}
+        .product{text-align:center;cursor:pointer;padding:25px;border-radius:22px;background:rgba(255,255,255,0.6);backdrop-filter:blur(12px);box-shadow:0 15px 35px rgba(0,0,0,0.15);transition:0.35s;border:2px solid rgba(255,255,255,0.4);}
+        .product:hover{transform:translateY(-10px) scale(1.05);box-shadow:0 20px 45px rgba(0,0,0,0.25);}
+        .product img{width:230px;border-radius:18px;margin-bottom:12px;}
+        .section{max-width:900px;margin:100px auto;font-size:18px;line-height:1.8;color:#333;padding:0 20px;}
+        .step{background:rgba(255,255,255,0.7);padding:20px;border-radius:18px;box-shadow:0 8px 20px rgba(0,0,0,0.15); margin-bottom: 10px;}
+        .video-box{background:white;padding:20px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.2);text-align:center;}
+        .video-box iframe{width:100%;height:315px;border-radius:12px;}
+        .popup{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);justify-content:center;align-items:center;z-index: 2000;}
+        .popup-content{background:rgba(255,255,255,0.95);padding:35px;border-radius:20px;width:60%;max-width:650px;font-size:18px;line-height:1.7;}
+        .footer{margin-top:140px;background:rgba(231,198,183,0.9);text-align:center;padding:22px;}
+        .resultBox {background: #f9f9f9; padding: 10px; border-radius: 10px; margin-top: 15px; font-weight: bold;}
+        #loadingMsg { color: #d9534f; font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="overlay">
+    <div class="header">BỘ SẢN PHẨM CHĂM SÓC HỌC ĐƯỜNG</div>
+    <div class="subtitle">Dự án STEM – Lớp 11A16 – Phú Nhuận</div>
+
+    <div class="products">
+        <div class="product" onclick="openPopup('gel')">
+            <img src="gel.jpg" alt="Gel">
+            <p><b>Gel rửa tay sát khuẩn</b></p>
+        </div>
+        <div class="product" onclick="openPopup('soap')">
+            <img src="soap.jpg" alt="Xà bông">
+            <p><b>Xà bông nghệ mộc</b></p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Quy trình thực hiện</h2>
+        <div class="process-container">
+            <div class="process">
+                <div class="step"><h3>1. Nghiên cứu</h3><p>Tìm hiểu tài liệu công thức.</p></div>
+                <div class="step"><h3>2. Chuẩn bị</h3><p>Nguyên liệu thiên nhiên.</p></div>
+                <div class="step"><h3>3. Thực nghiệm</h3><p>Pha chế theo tỉ lệ.</p></div>
+                <div class="step"><h3>4. Kiểm tra</h3><p>Đo pH an toàn.</p></div>
+            </div>
+            <div class="video-box">
+                <iframe src="https://www.youtube-nocookie.com/embed/40jNvrZDnJE" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Dự án STEM – Nhóm EchoOverEgo | Lớp 11A16 – Năm học 2025 – 2026
+    </div>
+</div>
+
+<div id="gel" class="popup"><div class="popup-content"><span style="float:right;cursor:pointer" onclick="closePopup('gel')">✕</span><h2>Gel rửa tay</h2><p>Thành phần thảo mộc...</p></div></div>
+<div id="soap" class="popup"><div class="popup-content"><span style="float:right;cursor:pointer" onclick="closePopup('soap')">✕</span><h2>Xà bông nghệ</h2><p>Thành phần dầu dừa...</p></div></div>
+
+<div id="scannerBtn">🔬</div>
+<div id="scannerPopup">
+    <h2>Colony Scanner</h2>
+    <p id="loadingMsg">Đang tải thư viện AI...</p>
+    <input type="file" id="imageInput" accept="image/*">
+    <canvas id="canvasOutput"></canvas>
+    <div class="resultBox">
+        <p>Tổng vi khuẩn: <span id="total">0</span></p>
+        <p>E.coli (Xanh): <span id="ecoli">0</span></p>
+        <p>Coliform (Đỏ): <span id="coliform">0</span></p>
+    </div>
+    <br>
+    <button onclick="closeScanner()" style="padding: 10px 20px; cursor:pointer">Đóng</button>
+</div>
+
+<script async src="https://docs.opencv.org/4.x/opencv.js" onload="onOpenCvReady()"></script>
+
+<script>
+/* 1. ĐIỀU KHIỂN GIAO DIỆN */
+function openPopup(id){ document.getElementById(id).style.display="flex"; }
+function closePopup(id){ document.getElementById(id).style.display="none"; }
+function closeScanner(){ document.getElementById("scannerPopup").style.display="none"; }
+document.getElementById("scannerBtn").onclick=function(){ document.getElementById("scannerPopup").style.display="block"; }
+
+function onOpenCvReady() {
+    document.getElementById("loadingMsg").innerText = "● Thư viện đã sẵn sàng";
+    document.getElementById("loadingMsg").style.color = "green";
+}
+
+/* 2. XỬ LÝ ẢNH CHÍNH */
+document.getElementById('imageInput').addEventListener('change', function(e) {
+    if(!e.target.files[0]) return;
+    
+    let img = new Image();
+    img.onload = function() {
+        let canvas = document.getElementById("canvasOutput");
+        let ctx = canvas.getContext("2d");
+        
+        // Hiển thị ảnh tạm thời để user thấy
+        let displayWidth = 400;
+        let displayHeight = img.height * (displayWidth / img.width);
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+        ctx.drawImage(img, 0, 0, displayWidth, displayHeight);
+
+        // Chạy thuật toán đếm
+        try {
+            detectColonies(img); 
+        } catch (err) {
+            console.error(err);
+            alert("Đang khởi tạo thư viện, vui lòng thử lại sau vài giây.");
+        }
+    };
+    img.src = URL.createObjectURL(e.target.files[0]);
+});
+
+async function detectColonies(imgElement) {
+    // Đọc ảnh từ element Image để đảm bảo độ phân giải gốc
+    let src = cv.imread(imgElement);
+    
+    // 1. CHUẨN HÓA KÍCH THƯỚC (QUAN TRỌNG)
+    let dsize = new cv.Size(800, src.rows * 800 / src.cols);
+    cv.resize(src, src, dsize, 0, 0, cv.INTER_AREA);
+
+    let hsv = new cv.Mat();
+    cv.cvtColor(src, hsv, cv.COLOR_RGBA2RGB);
+    cv.cvtColor(hsv, hsv, cv.COLOR_RGB2HSV);
+
+    // 2. NGƯỠNG MÀU NHẠY CẢM (Đã tối ưu cho ảnh điện thoại)
+    let ecoliMask = new cv.Mat();
+    let coliformMask = new cv.Mat();
+
+    // E.coli: Xanh dương
+    cv.inRange(hsv, new cv.Scalar(85, 40, 40), new cv.Scalar(140, 255, 255), ecoliMask);
+
+    // Coliform: Đỏ (2 dải màu)
+    let r1 = new cv.Mat(), r2 = new cv.Mat();
+    cv.inRange(hsv, new cv.Scalar(0, 40, 40), new cv.Scalar(15, 255, 255), r1);
+    cv.inRange(hsv, new cv.Scalar(155, 40, 40), new cv.Scalar(180, 255, 255), r2);
+    cv.add(r1, r2, coliformMask);
+
+    // 3. KHỬ NHIỄU
+    let M = cv.getStructuringElement(cv.MORPH_ELLIPSE, new cv.Size(3, 3));
+    cv.morphologyEx(ecoliMask, ecoliMask, cv.MORPH_OPEN, M);
+    cv.morphologyEx(coliformMask, coliformMask, cv.MORPH_OPEN, M);
+
+    // 4. HÀM ĐẾM & VẼ ĐỂ KIỂM TRA
+    function countAndDraw(mask, color, labelId) {
+        let contours = new cv.MatVector();
+        let hierarchy = new cv.Mat();
+        cv.findContours(mask, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+        
+        let count = 0;
+        for (let i = 0; i < contours.size(); ++i) {
+            let cnt = contours.get(i);
+            let area = cv.contourArea(cnt);
+            if (area > 8) { // Lọc bỏ rác nhỏ li ti
+                count++;
+                // Vẽ vòng tròn đánh dấu lên ảnh để debug
+                let rect = cv.boundingRect(cnt);
+                let point1 = new cv.Point(rect.x, rect.y);
+                let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
+                cv.rectangle(src, point1, point2, color, 2);
+            }
+        }
+        document.getElementById(labelId).innerText = count;
+        contours.delete(); hierarchy.delete();
+        return count;
+    }
+
+    let c1 = countAndDraw(ecoliMask, [0, 255, 0, 255], "ecoli"); // Vẽ viền xanh lá cho dễ nhìn
+    let c2 = countAndDraw(coliformMask, [255, 0, 0, 255], "coliform");
+    document.getElementById("total").innerText = c1 + c2;
+
+    // Hiển thị ảnh đã đánh dấu lên canvas
+    cv.imshow('canvasOutput', src);
+
+    // 5. DỌN DẸP
+    src.delete(); hsv.delete(); ecoliMask.delete(); coliformMask.delete();
+    r1.delete(); r2.delete(); M.delete();
+}
+</script>
+
+</body>
+</html>
